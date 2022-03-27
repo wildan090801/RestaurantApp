@@ -62,7 +62,8 @@ class NotificationHelper {
 
     var titleNotification = "<b>Restaurant Open</b>";
     var randomRestaurant = Random().nextInt(restaurant.count);
-    var titleRestaurant = restaurant.restaurants[randomRestaurant].name;
+    var titleRestaurant =
+        restaurant.restaurants[randomRestaurant].name + " is now open";
     var payload = {"id": restaurant.restaurants[randomRestaurant].id};
 
     await flutterLocalNotificationsPlugin.show(

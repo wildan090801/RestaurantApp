@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:restaurant_app/common/navigation.dart';
 import 'package:restaurant_app/data/model/restaurant_list.dart';
 import 'package:restaurant_app/provider/list_provider.dart';
 import 'package:restaurant_app/utils/result_state.dart';
@@ -80,7 +81,7 @@ class _HomePageState extends State<HomePage> {
   Widget buildRestoList(RestaurantElement resto, BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Navigator.pushNamed(context, '/detail-page', arguments: resto.id);
+        Navigation.intentWithData("/detail-page", resto);
       },
       child: Container(
         margin: const EdgeInsets.only(bottom: 40),

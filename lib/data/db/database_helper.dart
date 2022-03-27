@@ -1,4 +1,4 @@
-import 'package:restaurant_app/data/model/restaurant_detail.dart';
+import 'package:restaurant_app/data/model/restaurant_list.dart';
 import 'package:sqflite/sqflite.dart';
 
 class DatabaseHelper {
@@ -16,16 +16,17 @@ class DatabaseHelper {
   Future<Database> _initializeDb() async {
     var path = await getDatabasesPath();
     var db = openDatabase(
-      '$path/restaurantapp.db',
+      '$path/Resto.db',
       onCreate: (db, version) async {
         await db.execute('''CREATE TABLE $_tblFavorite (
-             id TEXT PRIMARY KEY,
-             name TEXT,
-             pictureId TEXT,
-             city TEXT,
-             rating DOUBLE,
-           )     
-        ''');
+                id TEXT PRIMARY KEY,
+                name TEXT,
+                description TEXT,
+                pictureId TEXT,
+                city TEXT,
+                rating DOUBLE
+               )     
+            ''');
       },
       version: 1,
     );
@@ -39,16 +40,17 @@ class DatabaseHelper {
     return _database;
   }
 
-  Future<void> insertFavorite(RestaurantDetail restaurant) async {
+  Future<void> insertFavorite(RestaurantElement resto) async {
     final db = await database;
-    await db!.insert(_tblFavorite, restaurant.toJson());
+
+    await db!.insert(_tblFavorite, resto.toJson());
   }
 
-  Future<List<RestaurantDetail>> getFavorites() async {
+  Future<List<RestaurantElement>> getFavorites() async {
     final db = await database;
     List<Map<String, dynamic>> results = await db!.query(_tblFavorite);
 
-    return results.map((res) => RestaurantDetail.fromJson(res)).toList();
+    return results.map((res) => RestaurantElement.fromJson(res)).toList();
   }
 
   Future<Map> getFavoriteById(String id) async {

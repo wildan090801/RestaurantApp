@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:restaurant_app/data/db/database_helper.dart';
-import 'package:restaurant_app/data/model/restaurant_detail.dart';
+import 'package:restaurant_app/data/model/restaurant_list.dart';
 import 'package:restaurant_app/utils/result_state.dart';
 
 class DatabaseProvider extends ChangeNotifier {
   final DatabaseHelper databaseHelper;
 
   DatabaseProvider({required this.databaseHelper}) {
-    _getFavorites();
+    getFavorites();
   }
 
   late ResultState _state;
@@ -16,10 +16,10 @@ class DatabaseProvider extends ChangeNotifier {
   String _message = '';
   String get message => _message;
 
-  List<RestaurantDetail> _favorites = [];
-  List<RestaurantDetail> get favorites => _favorites;
+  List<RestaurantElement> _favorites = [];
+  List<RestaurantElement> get favorites => _favorites;
 
-  void _getFavorites() async {
+  void getFavorites() async {
     try {
       _state = ResultState.loading;
       notifyListeners();
@@ -38,10 +38,10 @@ class DatabaseProvider extends ChangeNotifier {
     }
   }
 
-  void addFavorite(RestaurantDetail restaurant) async {
+  void addFavorite(RestaurantElement restaurant) async {
     try {
       await databaseHelper.insertFavorite(restaurant);
-      _getFavorites();
+      getFavorites();
     } catch (e) {
       _state = ResultState.error;
       _message = 'Error: $e';
@@ -57,7 +57,7 @@ class DatabaseProvider extends ChangeNotifier {
   void removeFavorite(String id) async {
     try {
       await databaseHelper.removeFavorite(id);
-      _getFavorites();
+      getFavorites();
     } catch (e) {
       _state = ResultState.error;
       _message = 'Error: $e';

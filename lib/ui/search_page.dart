@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_offline/flutter_offline.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
-import 'package:restaurant_app/data/model/restaurant_search.dart';
+import 'package:restaurant_app/data/model/restaurant_list.dart';
 import 'package:restaurant_app/provider/search_provider.dart';
 import 'package:restaurant_app/utils/result_state.dart';
 
@@ -19,10 +20,41 @@ class _SearchPageState extends State<SearchPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: const Text('Search'),
-        ),
-        body: Center(
+      appBar: AppBar(
+        centerTitle: true,
+        title: const Text('Search Restaurants'),
+        elevation: 0,
+      ),
+      body: OfflineBuilder(connectivityBuilder: (
+        BuildContext context,
+        ConnectivityResult connectivity,
+        Widget child,
+      ) {
+        if (connectivity == ConnectivityResult.none) {
+          return Center(
+            child: SizedBox(
+              height: MediaQuery.of(context).size.height / 1.5,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: const [
+                  Icon(
+                    Icons.wifi_off,
+                    size: 150,
+                  ),
+                  Text(
+                    "Failed to Load Data \nPlease Check Your Internet Connection",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 16),
+                  ),
+                ],
+              ),
+            ),
+          );
+        } else {
+          return child;
+        }
+      }, builder: (BuildContext context) {
+        return Center(
           child: Column(
             children: [
               const SizedBox(height: 20),
@@ -69,7 +101,15 @@ class _SearchPageState extends State<SearchPage> {
               ),
             ],
           ),
-        ));
+        );
+      }),
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
   }
 
   Widget _searchRestaurant(BuildContext context) {
@@ -109,7 +149,7 @@ class _SearchPageState extends State<SearchPage> {
               itemCount: state.result!.restaurants.length,
               itemBuilder: (context, index) {
                 var resto = state.result!.restaurants;
-                return buildRestoList(resto[index], context);
+                return buildRestoList(resto[index], index, context);
               },
             ),
           );
@@ -121,11 +161,11 @@ class _SearchPageState extends State<SearchPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: const [
                   Icon(
-                    Icons.wifi_off,
+                    Icons.search,
                     size: 150,
                   ),
                   Text(
-                    "Failed to Load Data \nPlease Check Your Internet Connection",
+                    "Let's Find The Restaurant You Want",
                     textAlign: TextAlign.center,
                     style: TextStyle(fontSize: 16),
                   ),
@@ -140,10 +180,11 @@ class _SearchPageState extends State<SearchPage> {
     );
   }
 
-  Widget buildRestoList(RestaurantSearch resto, BuildContext context) {
+  Widget buildRestoList(
+      RestaurantElement resto, int index, BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Navigator.pushNamed(context, '/detail-page', arguments: resto.id);
+        Navigator.pushNamed(context, '/detail-page', arguments: resto);
       },
       child: Container(
         margin: const EdgeInsets.only(bottom: 40),
@@ -219,11 +260,5 @@ class _SearchPageState extends State<SearchPage> {
         ),
       ),
     );
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
   }
 }

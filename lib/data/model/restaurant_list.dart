@@ -1,11 +1,3 @@
-import 'dart:convert';
-
-Restaurant restaurantsFromJson(String str) =>
-    Restaurant.fromJson(json.decode(str));
-Restaurant restaurantFromSearchJson(String str) => Restaurant.fromJson(
-      json.decode(str),
-    );
-
 class Restaurant {
   Restaurant({
     required this.error,

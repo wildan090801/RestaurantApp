@@ -3,14 +3,15 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:restaurant_app/data/api/api_service.dart';
 import 'package:restaurant_app/data/db/database_helper.dart';
+import 'package:restaurant_app/data/model/restaurant_list.dart';
 import 'package:restaurant_app/provider/database_provider.dart';
 import 'package:restaurant_app/provider/detail_provider.dart';
 import 'package:restaurant_app/utils/result_state.dart';
-import 'package:restaurant_app/widget/favorite_button.dart';
 
 class DetailPage extends StatelessWidget {
-  final String restoId;
-  const DetailPage({Key? key, required this.restoId}) : super(key: key);
+  final RestaurantElement restaurant;
+
+  const DetailPage({Key? key, required this.restaurant}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +19,7 @@ class DetailPage extends StatelessWidget {
       providers: [
         ChangeNotifierProvider<RestaurantDetailProvider>(
             create: (_) => RestaurantDetailProvider(
-                apiService: ApiService(), id: restoId)),
+                apiService: ApiService(), id: restaurant.id)),
         ChangeNotifierProvider<DatabaseProvider>(
             create: (_) => DatabaseProvider(databaseHelper: DatabaseHelper())),
       ],
@@ -85,7 +86,33 @@ class DetailPage extends StatelessWidget {
                               fontWeight: FontWeight.w500,
                             ),
                           ),
-                          FavoriteButton(restaurant: state.result.restaurant)
+                          Consumer<DatabaseProvider>(
+                            builder: (context, provider, child) {
+                              return FutureBuilder<bool>(
+                                future: provider.isFavorited(restaurant.id),
+                                builder: (context, snapshot) {
+                                  var isFavorited = snapshot.data ?? false;
+                                  return CircleAvatar(
+                                    backgroundColor: Colors.black12,
+                                    child: isFavorited
+                                        ? IconButton(
+                                            icon: const Icon(Icons.favorite),
+                                            color: Colors.red[400],
+                                            onPressed: () => provider
+                                                .removeFavorite(restaurant.id),
+                                          )
+                                        : IconButton(
+                                            icon: const Icon(
+                                                Icons.favorite_border),
+                                            color: Colors.red[400],
+                                            onPressed: () => provider
+                                                .addFavorite(restaurant),
+                                          ),
+                                  );
+                                },
+                              );
+                            },
+                          ),
                         ],
                       ),
                       Row(

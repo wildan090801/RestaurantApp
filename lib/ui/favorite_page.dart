@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
-import 'package:restaurant_app/data/model/restaurant_detail.dart';
+import 'package:restaurant_app/data/model/restaurant_list.dart';
 import 'package:restaurant_app/provider/database_provider.dart';
+import 'package:restaurant_app/ui/detail_page.dart';
 import 'package:restaurant_app/utils/result_state.dart';
-import 'package:restaurant_app/widget/favorite_button.dart';
 
 class FavoritePage extends StatelessWidget {
   const FavoritePage({Key? key}) : super(key: key);
@@ -95,30 +95,6 @@ class FavoritePage extends StatelessWidget {
                 const SizedBox(
                   height: 20,
                 ),
-                SizedBox(
-                  height: 44,
-                  child: TextButton(
-                    onPressed: () {},
-                    style: TextButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 10,
-                        horizontal: 24,
-                      ),
-                      backgroundColor: Colors.lightBlue,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                    child: Text(
-                      'Explore Now',
-                      style: GoogleFonts.poppins(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w400,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                ),
               ],
             ),
           ),
@@ -129,7 +105,7 @@ class FavoritePage extends StatelessWidget {
 }
 
 class FavoriteData extends StatelessWidget {
-  final RestaurantDetail restaurant;
+  final RestaurantElement restaurant;
 
   const FavoriteData({Key? key, required this.restaurant}) : super(key: key);
 
@@ -142,11 +118,17 @@ class FavoriteData extends StatelessWidget {
           builder: (context, snapshot) {
             return GestureDetector(
               onTap: () {
-                Navigator.pushNamed(context, '/detail-page',
-                    arguments: restaurant.id);
+                Navigator.of(context)
+                    .push(
+                  MaterialPageRoute(
+                      builder: (_) => DetailPage(restaurant: restaurant)),
+                )
+                    .then((_) {
+                  context.read<DatabaseProvider>().getFavorites();
+                });
               },
               child: Container(
-                margin: const EdgeInsets.only(bottom: 40),
+                margin: const EdgeInsets.fromLTRB(15, 25, 15, 15),
                 height: 80,
                 child: Row(
                   children: [
@@ -195,7 +177,6 @@ class FavoriteData extends StatelessWidget {
                               style: GoogleFonts.poppins(
                                   fontSize: 14, color: Colors.black54),
                             ),
-                            FavoriteButton(restaurant: restaurant)
                           ],
                         ),
                         Row(

@@ -1,3 +1,5 @@
+import 'package:restaurant_app/data/model/restaurant_list.dart';
+
 class RestaurantsSearch {
   RestaurantsSearch({
     required this.error,
@@ -7,14 +9,14 @@ class RestaurantsSearch {
 
   bool error;
   int founded;
-  List<RestaurantSearch> restaurants;
+  List<RestaurantElement> restaurants;
 
   factory RestaurantsSearch.fromJson(Map<String, dynamic> json) =>
       RestaurantsSearch(
         error: json["error"],
         founded: json["founded"],
-        restaurants: List<RestaurantSearch>.from(
-            json["restaurants"].map((x) => RestaurantSearch.fromJson(x))),
+        restaurants: List<RestaurantElement>.from(
+            json["restaurants"].map((x) => RestaurantElement.fromJson(x))),
       );
 
   Map<String, dynamic> toJson() => {

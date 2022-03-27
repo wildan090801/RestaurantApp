@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:restaurant_app/common/navigation.dart';
 import 'package:restaurant_app/data/api/api_service.dart';
 import 'package:restaurant_app/data/db/database_helper.dart';
+import 'package:restaurant_app/data/model/restaurant_list.dart';
 import 'package:restaurant_app/provider/database_provider.dart';
 import 'package:restaurant_app/provider/list_provider.dart';
 import 'package:restaurant_app/provider/scheduling_provider.dart';
@@ -64,7 +65,8 @@ class MyApp extends StatelessWidget {
           '/splash-screen': (context) => const SplashScreen(),
           '/main-page': (context) => const MainPage(),
           '/detail-page': (context) => DetailPage(
-                restoId: ModalRoute.of(context)!.settings.arguments as String,
+                restaurant: ModalRoute.of(context)!.settings.arguments!
+                    as RestaurantElement,
               ),
           '/search-page': (context) => const SearchPage(),
           '/favorite-page': (context) => const FavoritePage(),
